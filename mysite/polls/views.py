@@ -3,15 +3,15 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
-from django.contrib.auth import views
+from django.contrib.auth import views as auth_views
 
 from .models import Choice, Question
 
-class LoginView(views.LoginView):
+class LoginView(auth_views.LoginView):
     template_name = 'polls/login.html'
     next_page = '/'
 
-class LogoutView(views.LogoutView):
+class LogoutView(auth_views.LogoutView):
     next_page = '/'
 
 class IndexView(generic.ListView):
