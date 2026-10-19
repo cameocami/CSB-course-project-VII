@@ -6,6 +6,12 @@ from django.utils import timezone
 from django.contrib.auth import views as auth_views
 
 from .models import Choice, Question
+from .forms import UserCreationForm
+
+class SignupView(generic.CreateView):
+    form_class = UserCreationForm
+    template_name = 'polls/signup.html'
+    success_url = '/'
 
 class LoginView(auth_views.LoginView):
     template_name = 'polls/login.html'

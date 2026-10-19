@@ -7,10 +7,16 @@ Logged in as {{user.username}}.
 
 {% else %}
 You are not logged in.
+<p></p>
 <form action="{% url 'polls:login' %}" method="GET">
 	{% csrf_token %}
     <input type="submit" value="Login"/>
 </form>
+<form action="{% url 'polls:signup' %}" method="GET">
+	{% csrf_token %}
+    <input type="submit" value="Sign up"/>
+</form>
+
 </p>
 {% endif %}
 
