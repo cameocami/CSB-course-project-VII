@@ -1,11 +1,15 @@
 import datetime
 
+from unittest.mock import Mock
+
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 
+from .models import Question, Choice, Vote
 
-from .models import Question
 
 def create_question(question_text, days):
     """
@@ -144,3 +148,36 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
 
+class ChoiceModelTests(TestCase):
+    def test_vote_count(self):
+        user1 = User.objects.create(username="user1")
+        user2 = User.objects.create(username="user2")
+        question1 = Question.objects.create(question_text="test question1", pub_date=timezone.now())
+        choice1 = Choice.objects.create(question=question1, choice_text="test_choice1")
+        choice2 = Choice.objects.create(question=question1, choice_text="test_choice2")
+        Vote.objects.create(user=user1, question=question1, choice=choice1)
+        Vote.objects.create(user=user2, question=question1, choice=choice1)
+        self.assertEqual(choice1.get_votes(), 2)
+        self.assertEqual(choice2.get_votes(), 0)
+
+class VoteModelTests(TestCase):
+
+    def test_vote_creation(self):
+        user = User.objects.create()
+        question1 = Question.objects.create(question_text="test question1", pub_date=timezone.now())
+        choice1 = Choice.objects.create(question=question1, choice_text="test_choice1")
+        vote1 = Vote.objects.create(user=user, question=question1, choice=choice1)
+        self.assertIs(vote1.user, user)
+        self.assertIs(vote1.question, question1)
+        self.assertIs(vote1.choice, choice1)
+
+    def test_one_vote_per_user_per_question(self):
+        user = User.objects.create()
+        question1 = Question.objects.create(question_text="test question1", pub_date=timezone.now())
+        choice1 = Choice.objects.create(question=question1, choice_text="test_choice1")
+        vote1 = Vote.objects.create(user=user, question=question1, choice=choice1)
+        try:
+            vote2 = Vote.objects.create(user=user, question=question1, choice=choice1)
+        except IntegrityError:
+            pass
+        self.assertRaisesMessage(IntegrityError, 'UNIQUE constraint failed')

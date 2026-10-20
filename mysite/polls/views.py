@@ -5,8 +5,9 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 
-from .models import Choice, Question
+from .models import Choice, Question, Vote
 from .forms import UserCreationForm
 
 class SignupView(generic.CreateView):
@@ -76,10 +77,15 @@ def vote(request, question_id):
             'question': question,
             'error_message': "You didn't select a choice.",
         })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+    user = request.user
+    try:
+        Vote.objects.create(user=user, question=question, choice=selected_choice)
+    except IntegrityError:
+        return render(request, 'polls/results.html', {
+            'question': question,
+            'error_message': "You have already voted.",
+    })
+    # Always return an HttpResponseRedirect after successfully dealing
+    # with POST data. This prevents data from being posted twice if a
+    # user hits the Back button.
+    return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
