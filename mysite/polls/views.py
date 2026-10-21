@@ -70,7 +70,7 @@ def results(request, question_id):
 
 '''
 FLAW 1: Broken Access Control starts here
-
+'''
 
 # @login_required(login_url="/login/") solution adds this line
 def vote(request, question_id):
@@ -85,6 +85,7 @@ def vote(request, question_id):
     user = request.user
     if user.is_anonymous:
         user = get_object_or_404(User, pk=1) # solution removes this line
+        # return HttpResponseRedirect(reverse('polls:login')) solution adds this line
     try:
         Vote.objects.create(user=user, question=question, choice=selected_choice)
     except IntegrityError:
@@ -94,13 +95,13 @@ def vote(request, question_id):
     })
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-
+'''
 FLAW 1: Broken Access Control ends here
 '''
 
 '''
 FLAW 1: Broken Access Control solution
-'''
+
 @login_required(login_url="/login/")
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
@@ -123,3 +124,4 @@ def vote(request, question_id):
     })
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+'''
