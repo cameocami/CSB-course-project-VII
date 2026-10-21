@@ -10,6 +10,9 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+<!--
+FLAW 1 Broken Access Control solution
+
 {% if user.is_authenticated %}
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}
@@ -27,5 +30,23 @@
 <br>
 <a href="{% url 'polls:results' question.id %}">Results</a>
 {% endif %}
+-->
+
+
+<!--FLAW 1 Broken Access Control flaw starts here-->
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+{% endfor %}
+<input {% if not user.is_authenticated %} hidden {% endif %} type="submit" value="Vote">
+</form>
+<br>
+<a href="{% url 'polls:results' question.id %}">Results</a>
+
+<!--FLAW 1 Broken Access Control flaw ends here-->
+
 {% endblock %}
 
