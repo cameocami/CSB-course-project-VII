@@ -117,4 +117,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+"""
+FLAW 2: Cryptographic Failures ends here
+"""
 PASSWORD_HASHERS = [ "polls.dummyhasher.DummyHasher" ]
+"""
+FLAW 2: Cryptographic Failures ends here
+"""
