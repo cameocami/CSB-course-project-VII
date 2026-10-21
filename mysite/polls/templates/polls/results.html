@@ -13,12 +13,7 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <li>{{ choice.choice_text }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
 {% endfor %}
 </ul>
-{% if user.is_authenticated %}
-<a href="{% url 'polls:detail' question.id %}">Vote again?</a>
-{% else %}
-<a href="{% url 'polls:detail' question.id %}">Back to choices</a>
-{% endif %}
 {% endblock %}
