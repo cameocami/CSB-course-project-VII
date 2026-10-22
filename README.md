@@ -9,33 +9,31 @@ This is the course project for [Introduction to Cyber Security](https://cybersec
 #### Description
 Voting is supposed to be limited to logged in users, but with current set up anonymous users can vote despite not being logged in. The html form just hides the submission button as seen [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html), which can easily be edited back into the form via browser developer tools. In addition, the back-end voting function defaults to the first user in the database as seen [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). 
 #### How to fix it
-Comment out code between
+Comment out code between these two comments in the back-end:
 ```
 """
 FLAW 1: Broken Access Control starts here
 """
-```
-which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py) and 
-```
 """
 FLAW 1: Broken Access Control ends here
 """
 ```
-which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). In addition comment out html between 
+which can be found [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). 
+
+In addition comment out html between 
 ```
 <!--FLAW 1 Broken Access Control starts here-->
 ```
-[here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html) and
 ```
 <!--FLAW 1 Broken Access Control ends here-->
 ```
 which can be found [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html). 
 
-Meanwhile, comment back in the solution under
+Meanwhile, comment back in the solution under:
 ```
 FLAW 1 Broken Access Control solution
 ```
-which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py).
+which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). And in the frontend:
 ```
 FLAW 1: Broken Access Control solution
 ```
@@ -47,11 +45,11 @@ The solution adds the decorator @login_required to the back-end voting method an
 - [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) The flaw with the hidden attribute of submission button removed.
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-3.png) Successful vote with anonymous user. 
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Webapp with the flaw patched.
-### [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
+### FLAW 2: [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
 #### Links pinpointing the flaw
-- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py) & ends [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
 #### Description
-Passwords are should to be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a format that can be easily computed back to the original password using the public library hashlib.
+Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a format that can be easily computed back to the original password using the public library hashlib.
 #### How to fix it
 Comment out code
 ```
