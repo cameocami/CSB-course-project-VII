@@ -45,28 +45,38 @@ The solution adds the decorator @login_required to the back-end voting method an
 - [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) The flaw with the hidden attribute of submission button removed.
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-3.png) Successful vote with anonymous user. 
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Webapp with the flaw patched.
+
 ### FLAW 2: [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
+
 #### Links pinpointing the flaw
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+
 #### Description
-Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a format that can be easily computed back to the original password using the public library hashlib.
+Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a plaintext format.
+
 #### How to fix it
 Comment out code
 ```
 """
-FLAW 2: Cryptographic Failures ends here
+FLAW 2: Cryptographic Failures starts here
 """
 PASSWORD_HASHERS = [ "polls.dummyhasher.DummyHasher" ]
 """
 FLAW 2: Cryptographic Failures ends here
 """
 ```
-which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
+which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
 
 Django will fall back on its default password hashers. 
 
 #### Screenshots
-- tba
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-1.png) User creation & login (alice:redqueen) using only dummy password hashing. 
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-2.png) Password saved in database in format: {hasher name} $ {salt} $ {plaintext password}.
+- [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-3.png) Admin view of user details. 
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-1.png) User creation & login (bob:thedragqueen) using default hashing. 
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-2.png) Password saved in database in format: {hasher name} $ {salt} $ {hashed password}.
+- [6](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-3.png) Admin view of user details. 
+
 ### [Injection](https://top10.owasp.org/2021/A03_2021-Injection/)
 ### [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
 ### [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
