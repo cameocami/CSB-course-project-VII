@@ -20,6 +20,8 @@ FLAW 1 Broken Access Control solution
     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
 {% endfor %}
+<input type="radio" name="choice" value="other">Other: <input type="text" name="new_choice" />
+<br>
 <input type="submit" value="Vote">
 </form>
 {% else %}
@@ -41,6 +43,8 @@ FLAW 1 Broken Access Control solution
     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
 {% endfor %}
+{% if user.is_authenticated %} <input type="radio" name="choice" value="other">Other: <input type="text" name="new_choice" /> {% endif %}
+<br>
 <input {% if not user.is_authenticated %} hidden {% endif %} type="submit" value="Vote">
 </form>
 <br>

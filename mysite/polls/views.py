@@ -67,25 +67,42 @@ def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
+def sanitize(user_input:str):
+    if len(user_input) == 0:
+        return "Other"
+    if len(user_input) > 200:
+        user_input = user_input[:200]
+    return user_input
 
+def new_choice(question, choice_text):
+    same_text = Choice.objects.filter(choice_text=choice_text)
+    if len(same_text) > 0:
+        return same_text[0]
+    return Choice.objects.create(question=question, choice_text=choice_text)
 '''
 FLAW 1: Broken Access Control starts here
 '''
 
-# @login_required(login_url="/login/") solution adds this line
+# @login_required(login_url="/login/") solution to FLAW 1 adds this line
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
     user = request.user
     if user.is_anonymous:
-        user = get_object_or_404(User, pk=1) # solution removes this line
-        # return HttpResponseRedirect(reverse('polls:login')) solution adds this line
+        user = get_object_or_404(User, pk=1) # solution to FLAW 1 removes this line
+        # return HttpResponseRedirect(reverse('polls:login')) solution to FLAW 1 adds this line
+    selected_choice = request.POST.get('choice')
+    if selected_choice == "other":
+        choice_text = sanitize(request.POST.get('new_choice'))
+        selected_choice = new_choice(question, choice_text)
+    else:
+        try:
+            selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            return render(request, 'polls/detail.html', {
+                'question': question,
+                'error_message': "You didn't select a choice.",
+            })
+    user = request.user
     try:
         Vote.objects.create(user=user, question=question, choice=selected_choice)
     except IntegrityError:
@@ -105,6 +122,9 @@ FLAW 1: Broken Access Control solution
 @login_required(login_url="/login/")
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    user = request.user
+    if user.is_anonymous:
+        return HttpResponseRedirect(reverse('polls:login'))
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
@@ -112,9 +132,7 @@ def vote(request, question_id):
             'question': question,
             'error_message': "You didn't select a choice.",
         })
-    user = request.user
-    if user.is_anonymous:
-        return HttpResponseRedirect(reverse('polls:login'))
+
     try:
         Vote.objects.create(user=user, question=question, choice=selected_choice)
     except IntegrityError:
