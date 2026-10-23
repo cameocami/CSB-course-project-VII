@@ -77,6 +77,30 @@ Django will fall back on its default password hashers.
 - [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-2.png) Password saved in database in format: {hasher name} $ {salt} $ {hashed password}.
 - [6](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-3.png) Admin view of user details. 
 
-### [Injection](https://top10.owasp.org/2021/A03_2021-Injection/)
+### FLAW 3: [Injection](https://top10.owasp.org/2021/A03_2021-Injection/)
+#### Links pinpointing the flaw
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html)
+#### Description
+User input should be by default considered not trust-worthy. Current set up labels user input as safe in the html template, which will cause the the browser to render it as is. Only a simple pop-up is scripted for this demonstration, but the inline JavaScript could eg. a function that would send the session cookie to an external server.
+#### How to fix it
+Navigate to the results.html page [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html). Comment out the html between these two comments:
+```
+<!--FLAW 3 Injection flaw starts here-->
+<li>{{ choice.choice_text | safe }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
+<!--FLAW 3 Injection flaw ends here-->
+```
+Meanwhile, comment back in the solution :
+```
+<!--FLAW 3 solution
+<li>{{ choice.choice_text }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
+-->
+```
+The solution removes the safe filter from the html template. Now the template will automatically escape characters could be interpreted by the browser. For example, the character "&" is converted to "&amp".
+#### Screenshots
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-1.png) 
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-2.png) 
+- [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-3.png)
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-4.png) 
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) 
 ### [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
 ### [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
