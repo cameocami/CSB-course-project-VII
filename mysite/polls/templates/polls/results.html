@@ -13,7 +13,12 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% for choice in question.choice_set.all %}
+    <!--FLAW 3 Injection flaw starts here-->
+    <li>{{ choice.choice_text | safe }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
+    <!--FLAW 3 Injection flaw ends here-->
+    <!--FLAW 3 solution
     <li>{{ choice.choice_text }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
+    -->
 {% endfor %}
 </ul>
 {% endblock %}
