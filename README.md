@@ -44,7 +44,7 @@ The solution adds the decorator @login_required to the back-end voting method an
 - [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-1.png) The flaw in its organic state.
 - [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) The flaw with the hidden attribute of submission button removed.
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-3.png) Successful vote with anonymous user. 
-- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Webapp with the flaw patched.
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Fixed: Webapp with the flaw patched.
 
 ### FLAW 2: [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
 
@@ -73,9 +73,9 @@ Django will fall back on its default password hashers.
 - [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-1.png) User creation & login (alice:redqueen) using only dummy password hashing. 
 - [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-2.png) Password saved in database in format: {hasher name} $ {salt} $ {plaintext password}.
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-before-3.png) Admin view of user details. 
-- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-1.png) User creation & login (bob:thedragqueen) using default hashing. 
-- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-2.png) Password saved in database in format: {hasher name} $ {salt} $ {hashed password}.
-- [6](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-3.png) Admin view of user details. 
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-1.png) Fixed: User creation & login (bob:thedragqueen) using default hashing. 
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-2.png) Fixed: Password saved in database in format: {hasher name} $ {salt} $ {hashed password}.
+- [6](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-2-after-3.png) Fixed: Admin view of user details. 
 
 ### FLAW 3: [Injection](https://top10.owasp.org/2021/A03_2021-Injection/)
 #### Links pinpointing the flaw
@@ -97,10 +97,10 @@ Meanwhile, comment back in the solution :
 ```
 The solution removes the safe filter from the html template. Now the template will automatically escape characters could be interpreted by the browser. For example, the character "&" is converted to "&amp".
 #### Screenshots
-- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-1.png) 
-- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-2.png) 
-- [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-3.png)
-- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-4.png) 
-- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) 
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-1.png) User input of malicious code.
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-2.png) User input posted. Redirect to results pages shows user input rendered as is. 
+- [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-3.png) Browser executes malicious code and creates the pop-up when navigating to results page. 
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-4.png) Snap shot of the unescaped user input in the html-file.
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) Fixed: Diplay of results & html with the user input escaped. 
 ### [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
 ### [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
