@@ -102,5 +102,48 @@ The solution removes the safe filter from the html template. Now the template wi
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-3.png) Browser executes malicious code and creates the pop-up when navigating to results page. 
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-4.png) Snap shot of the unescaped user input in the html-file.
 - [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) Fixed: Diplay of results & html with the user input escaped. 
-### [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
+### FLAW 4: [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
+
+#### Links pinpointing the flaw
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+
+#### Description
+Weak, well-known passwords should not be permitted. Current set up bypasses Django provided password validation, so that users can sign up using weak and/or commonly known passwords. This leaves the program open to authentication-related attacks.
+#### How to fix it
+Comment back in:
+```
+"""
+FLAW 4: Identification and Authentication Failures starts here
+# Password validation
+# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+FLAW 4: Identification and Authentication Failures ends here
+"""
+```
+which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
+
+Program will validate the passwords before user creation. It will check for minimum length, only numeric passwords, and similarity of the password to the username. In addition it will check againts this common password [list](https://gist.github.com/roycewilliams/226886fd01572964e1431ac8afc999ce) of 20,000 common passwords created by Royce Williams. 
+
+#### Screenshots
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-before-1.png) User creation without password validation.  
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-before-2.png) Successful user creation using weak credentials (username:password).
+- [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-before-3.png) Successful login using weak credentials (username:password).
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-after-1.png) Fixed: User creation with password validation.   
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-after-2.png) Fixed: User creation unsuccessful using weak credentials (username:password).  
+
+
 ### [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
