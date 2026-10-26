@@ -83,13 +83,16 @@ def new_choice(question, choice_text):
 FLAW 1: Broken Access Control starts here
 '''
 
-# @login_required(login_url="/login/") solution to FLAW 1 adds this line
+# @login_required(login_url="/login/")
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     user = request.user
     if user.is_anonymous:
-        user = get_object_or_404(User, pk=1) # solution to FLAW 1 removes this line
-        # return HttpResponseRedirect(reverse('polls:login')) solution to FLAW 1 adds this line
+        user = get_object_or_404(User, pk=1)
+        # return HttpResponseRedirect(reverse('polls:login'))
+    '''
+    FLAW 1: Broken Access Control ends here
+    '''
     selected_choice = request.POST.get('choice')
     if selected_choice == "other":
         choice_text = sanitize(request.POST.get('new_choice'))
@@ -112,34 +115,3 @@ def vote(request, question_id):
     })
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-'''
-FLAW 1: Broken Access Control ends here
-'''
-
-'''
-FLAW 1: Broken Access Control solution
-
-@login_required(login_url="/login/")
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    user = request.user
-    if user.is_anonymous:
-        return HttpResponseRedirect(reverse('polls:login'))
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-
-    try:
-        Vote.objects.create(user=user, question=question, choice=selected_choice)
-    except IntegrityError:
-        return render(request, 'polls/results.html', {
-            'question': question,
-            'error_message': "You have already voted.",
-    })
-    return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
-
-'''
