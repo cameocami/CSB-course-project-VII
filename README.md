@@ -145,5 +145,22 @@ Program will validate the passwords before user creation. It will check for mini
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-after-1.png) Fixed: User creation with password validation.   
 - [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-after-2.png) Fixed: User creation unsuccessful using weak credentials (username:password).  
 
+### FLAW 5: [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
 
-### [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
+#### Links pinpointing the flaw
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+
+#### Description
+Client-side should not be able to view error message details. The current set-up send full details to client when error occurs. 
+
+#### How to fix it
+Change debug setting from True to False:
+```
+DEBUG = True
+```
+which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
+
+Program will show standard error page according to HTTP response status code.  
+#### Screenshots
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-5-before-1.png) Poll not found 404 error message with full log.  
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-5-after-1.png) Fixed: Poll not found 404 error message with minimal information.
