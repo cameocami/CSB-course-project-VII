@@ -4,47 +4,54 @@ This is the course project for [Introduction to Cyber Security](https://cybersec
 ## Security Flaws
 ### FLAW 1: [Broken Access Control](https://top10.owasp.org/2021/A01_2021-Broken_Access_Control/)
 #### Links pinpointing the flaw
-- front-end: code starts [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html) & ends [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html)
-- back-end: code starts [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py) & ends [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py)
+- front-end: [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L38) 
+- back-end: [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L83)
 #### Description
-Voting is supposed to be limited to logged in users, but with current set up anonymous users can vote despite not being logged in. The html form just hides the submission button as seen [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html), which can easily be edited back into the form via browser developer tools. In addition, the back-end voting function defaults to the first user in the database as seen [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). 
+Voting is supposed to be limited to logged in users, but with current set up anonymous users can vote despite not being logged in. The html form just hides the submission button, which can easily be edited back into the form via browser developer tools. In addition, the back-end voting function defaults to the first user in the database.
+
 #### How to fix it
-Comment out code between these two comments in the back-end:
-```
-"""
-FLAW 1: Broken Access Control starts here
-"""
-"""
-FLAW 1: Broken Access Control ends here
-"""
-```
-which can be found [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). 
+In [views.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py), remove the comment delimiter for line [86](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L86):
 
-In addition comment out html between 
 ```
-<!--FLAW 1 Broken Access Control starts here-->
+@login_required(login_url="/login/")
 ```
+and line [92]((https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L92):
 ```
-<!--FLAW 1 Broken Access Control ends here-->
+return HttpResponseRedirect(reverse('polls:login'))
 ```
-which can be found [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html). 
+In the [detail.html](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L38) template, remove the code between the comments "FLAW 1 Broken Access Control flaw starts here" and "FLAW 1 Broken Access Control flaw ends here":
+```
+<!--FLAW 1 Broken Access Control flaw starts here-->
 
-Meanwhile, comment back in the solution under:
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+{% endfor %}
+{% if user.is_authenticated %} <input type="radio" name="choice" value="other">Other: <input type="text" name="new_choice" /> {% endif %}
+<br>
+<input {% if not user.is_authenticated %} hidden {% endif %} type="submit" value="Vote">
+</form>
+<br>
+<a href="{% url 'polls:results' question.id %}">Results</a>
+
+<!--FLAW 1 Broken Access Control flaw ends here-->
 ```
+While removing the comment delimiters from the [code above it](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L13): 
+```
+<!--
 FLAW 1 Broken Access Control solution
+...
+-->
 ```
-which is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py). And in the frontend:
-```
-FLAW 1: Broken Access Control solution
-```
-which can be found [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html). 
 
-The solution adds the decorator @login_required to the back-end voting method and doesn't use a default user. The front-end checks user authentication before rendering the form, and displays a list of the choices for an anonymous user. 
+The solution adds the decorator @login_required to the back-end voting method and doesn't use the default user. The front-end checks user authentication before rendering the form, and displays a list of the choices for an anonymous user instead of the voting form.
 #### Screenshots
-- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-1.png) The flaw in its organic state.
-- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) The flaw with the hidden attribute of submission button removed.
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-1.png) Poll detail view as an anonymous user. 
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) Poll detail view view source code shows hidden button for form submission. 
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-3.png) Successful vote with anonymous user. 
-- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Fixed: Webapp with the flaw patched.
+- [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Fixed: Poll detail view as an anonymous user.
 
 ### FLAW 2: [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
 
