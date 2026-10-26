@@ -15,11 +15,11 @@ In [views.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysi
 ```
 @login_required(login_url="/login/")
 ```
-and line [92]((https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L92):
+and line [92](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L92):
 ```
 return HttpResponseRedirect(reverse('polls:login'))
 ```
-In the [detail.html](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L38) template, remove the code between the comments "FLAW 1 Broken Access Control flaw starts here" and "FLAW 1 Broken Access Control flaw ends here":
+In the [detail.html](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L38) template, remove the code between the comments:
 ```
 <!--FLAW 1 Broken Access Control flaw starts here-->
 
@@ -48,21 +48,21 @@ FLAW 1 Broken Access Control solution
 
 The solution adds the decorator @login_required to the back-end voting method and doesn't use the default user. The front-end checks user authentication before rendering the form, and displays a list of the choices for an anonymous user instead of the voting form.
 #### Screenshots
-- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-1.png) Poll detail view as an anonymous user. 
-- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) Poll detail view view source code shows hidden button for form submission. 
+- [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-1.png) Poll detail view as an anonymous user. Source code shows hidden button for the form submission.
+- [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-2.png) Poll detail view as an anonymous user with the hidden attribute removed from the submission button.
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-before-3.png) Successful vote with anonymous user. 
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-1-after-1.png) Fixed: Poll detail view as an anonymous user.
 
 ### FLAW 2: [Cryptographic Failures](https://top10.owasp.org/2021/A02_2021-Cryptographic_Failures/)
 
 #### Links pinpointing the flaw
-- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119)
 
 #### Description
 Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a plaintext format.
 
 #### How to fix it
-Comment out code
+In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119) file, remove code between the c out code
 ```
 """
 FLAW 2: Cryptographic Failures starts here
@@ -72,8 +72,6 @@ PASSWORD_HASHERS = [ "polls.dummyhasher.DummyHasher" ]
 FLAW 2: Cryptographic Failures ends here
 """
 ```
-which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
-
 Django will fall back on its default password hashers. 
 
 #### Screenshots
@@ -88,15 +86,15 @@ Django will fall back on its default password hashers.
 #### Links pinpointing the flaw
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html)
 #### Description
-User input should be by default considered not trust-worthy. Current set up labels user input as safe in the html template, which will cause the the browser to render it as is. Only a simple pop-up is scripted for this demonstration, but the inline JavaScript could eg. a function that would send the session cookie to an external server.
+User input should be considered not trust-worthy, by default. Current set up labels user input as safe in the html template, which will cause the the browser to render it as is. Only a simple pop-up is scripted for this demonstration, but the inline JavaScript could be e.g. a function that sends the session cookie to an external server.
 #### How to fix it
-Navigate to the results.html page [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html). Comment out the html between these two comments:
+Navigate to the results.html page [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html#L16). Remove the code between these two comments:
 ```
 <!--FLAW 3 Injection flaw starts here-->
 <li>{{ choice.choice_text | safe }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
 <!--FLAW 3 Injection flaw ends here-->
 ```
-Meanwhile, comment back in the solution :
+And remove the comment delimiters for the [solution](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html#L19) :
 ```
 <!--FLAW 3 solution
 <li>{{ choice.choice_text }} -- {{ choice.get_votes }} vote{{ choice.votes|pluralize }}</li>
@@ -108,16 +106,16 @@ The solution removes the safe filter from the html template. Now the template wi
 - [2](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-2.png) User input posted. Redirect to results pages shows user input rendered as is. 
 - [3](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-3.png) Browser executes malicious code and creates the pop-up when navigating to results page. 
 - [4](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-before-4.png) Snap shot of the unescaped user input in the html-file.
-- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) Fixed: Diplay of results & html with the user input escaped. 
+- [5](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-3-after-1.png) Fixed: Diplay of results and html source file with the user input escaped. 
 ### FLAW 4: [Identification and Authentication Failures](https://top10.owasp.org/2021/A07_2021-Identification_and_Authentication_Failures/)
 
 #### Links pinpointing the flaw
-- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L81)
 
 #### Description
 Weak, well-known passwords should not be permitted. Current set up bypasses Django provided password validation, so that users can sign up using weak and/or commonly known passwords. This leaves the program open to authentication-related attacks.
 #### How to fix it
-Comment back in:
+In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L81) file, remove comment delimiters from the section:
 ```
 """
 FLAW 4: Identification and Authentication Failures starts here
@@ -141,9 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
 FLAW 4: Identification and Authentication Failures ends here
 """
 ```
-which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
-
-Program will validate the passwords before user creation. It will check for minimum length, only numeric passwords, and similarity of the password to the username. In addition it will check againts this common password [list](https://gist.github.com/roycewilliams/226886fd01572964e1431ac8afc999ce) of 20,000 common passwords created by Royce Williams. 
+Program will now validate the passwords before user creation. It will check for minimum length, only numeric passwords, and similarity of the password to the username. In addition it will check against a [list](https://gist.github.com/roycewilliams/226886fd01572964e1431ac8afc999ce) of 20,000 common passwords created by Royce Williams. 
 
 #### Screenshots
 - [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-4-before-1.png) User creation without password validation.  
@@ -155,18 +151,16 @@ Program will validate the passwords before user creation. It will check for mini
 ### FLAW 5: [Security Logging and Monitoring Failures](https://top10.owasp.org/2021/A09_2021-Security_Logging_and_Monitoring_Failures/)
 
 #### Links pinpointing the flaw
-- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py)
+- [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L26)
 
 #### Description
-Client-side should not be able to view error message details. The current set-up send full details to client when error occurs. 
+Client-side should not be able to view error message details. The current set-up send full details to client when an error occurs. 
 
 #### How to fix it
-Change debug setting from True to False:
+In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L26) file, change the debug setting from True to False:
 ```
-DEBUG = True
+DEBUG = False
 ```
-which again is [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py). 
-
 Program will show standard error page according to HTTP response status code.  
 #### Screenshots
 - [1](https://github.com/cameocami/CSB-course-project-VII/blob/main/screenshots/flaw-5-before-1.png) Poll not found 404 error message with full log.  
