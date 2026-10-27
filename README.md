@@ -7,7 +7,10 @@ This is the course project for [Introduction to Cyber Security](https://cybersec
 - front-end: [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/detail.html#L38) 
 - back-end: [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L83)
 #### Description
-Voting is supposed to be limited to logged in users, but with current set up anonymous users can vote despite not being logged in. The html form just hides the submission button, which can easily be edited back into the form via browser developer tools. In addition, the back-end voting function defaults to the first user in the database.
+Voting is supposed to be limited to logged in users, but with current set up anonymous users can vote despite not being logged in. The html form just hides the submission button, which can easily be edited back into the form via browser developer tools. In addition, the back-end voting function defaults to the first user in the database. Out of the Broken Access Control risks described by OWASP this flaw demonstrates:
+- a violation of the principle of least privilege or deny by default, where access should only be granted for particular capabilities, roles, or users, but is available to anyone.
+- Bypassing access control checks by modifying the URL (parameter tampering or force browsing), internal application state, or the HTML page, or by using an attack tool modifying API requests.
+- Elevation of privilege. Acting as a user without being logged in or acting as an admin when logged in as a user.
 
 #### How to fix it
 In [views.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py), remove the comment delimiter for line [86](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/views.py#L86):
@@ -59,7 +62,13 @@ The solution adds the decorator @login_required to the back-end voting method an
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119)
 
 #### Description
-Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a plaintext format.
+Passwords should be stored and sent in an indecipherable format, but with current set up  the passwords are stored in plaintext. Admins can view stored passwords in database and they are passed on within the application in plaintext format. The DummyHasher created bybasses all crytographic security measures, such as: 
+- data transmitted in clear text
+- default crypto keys in use
+- proper key management or rotation missing
+- crypto keys checked into source code repositories
+- initialization vectors ignored and reused
+- randomness is used for cryptographic purposes that was not designed to meet cryptographic requirements.
 
 #### How to fix it
 In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119) file, remove code between the comments:
@@ -86,7 +95,9 @@ Django will fall back on its default password hashers.
 #### Links pinpointing the flaw
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html)
 #### Description
-User input should be considered not trust-worthy, by default. Current set up labels user input as safe in the html template, which will cause the the browser to render it as is. Only a simple pop-up is scripted for this demonstration, but the inline JavaScript could be e.g. a function that sends the session cookie to an external server.
+User input should be considered not trust-worthy, by default. Current set up labels user input as safe in the html template, which will cause the the browser to render it as is. Only a simple pop-up is scripted for this demonstration, but the inline JavaScript could be e.g. a function that sends the session cookie to an external server. Out of the Injection risks described by OWASP this flaw demonstrates:
+- User-supplied data is not validated, filtered, or sanitized by the application.
+- Dynamic queries or non-parameterized calls without context-aware escaping are used directly in the interpreter.
 #### How to fix it
 Navigate to the results.html page [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/polls/templates/polls/results.html#L16). Remove the code between these two comments:
 ```
@@ -113,7 +124,10 @@ The solution removes the safe filter from the html template. Now the template wi
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L81)
 
 #### Description
-Weak, well-known passwords should not be permitted. Current set up bypasses Django provided password validation, so that users can sign up using weak and/or commonly known passwords. This leaves the program open to authentication-related attacks.
+Weak, well-known passwords should not be permitted. Current set up bypasses Django provided password validation, so that users can sign up using weak and/or commonly known passwords. This leaves the program open to authentication-related attacks. Out of the Identification and Authentication Failures risks described by OWASP this flaw demonstrates:
+- Permits default, weak, or well-known passwords, such as "Password1" or "admin/admin".
+- Uses plain text, encrypted, or weakly hashed passwords data stores (see flaw 2)
+- Has missing or ineffective multi-factor authentication.
 #### How to fix it
 In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L81) file, remove comment delimiters from the section:
 ```
@@ -154,7 +168,8 @@ Program will now validate the passwords before user creation. It will check for 
 - [here](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L26)
 
 #### Description
-Client-side should not be able to view error message details. The current set-up send full details to client when an error occurs. 
+Client-side should not be able to view error message details. The current set-up send full details to client when an error occurs.  Out of the Security Logging and Monitoring Failures described by OWASP this flaw demonstrates:
+- You are vulnerable to information leakage by making logging and alerting events visible to a user or an attacker
 
 #### How to fix it
 In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L26) file, change the debug setting from True to False:
