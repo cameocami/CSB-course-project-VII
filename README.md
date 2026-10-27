@@ -62,7 +62,7 @@ The solution adds the decorator @login_required to the back-end voting method an
 Passwords should be stored and sent in an indecipherable format, but with current set up admins can view stored passwords in database in a plaintext format.
 
 #### How to fix it
-In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119) file, remove code between the c out code
+In the [settings.py](https://github.com/cameocami/CSB-course-project-VII/blob/main/mysite/mysite/settings.py#L119) file, remove code between the comments:
 ```
 """
 FLAW 2: Cryptographic Failures starts here
